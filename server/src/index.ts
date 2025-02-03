@@ -9,6 +9,7 @@ const router: Router = Router();
 
 router.post("/api/book", async function(req: Request, res: Response){
     try{
+        console.log("HERE")
         let data = req.body;
 
         let newBook: IBook = new Book({
@@ -32,5 +33,38 @@ router.post("/api/book", async function(req: Request, res: Response){
     }
 
 })
+
+router.get("/api/books/:name", async function(req: Request, res: Response){
+    try{
+        console.log("1HERE")
+        let bookname: any = req.params.name
+        console.log("2HERE" + bookname)
+
+        let theBook = await Book.findOne({name: bookname})
+
+        if(theBook){
+            res.status(200).json({data: theBook})
+        }else{
+            res.status(400).json({message: "No book found."})
+        }
+        
+
+
+        
+        
+       
+
+        
+    } catch (error: any){
+        console.error(`Error occur: ${error}`)
+        
+    }
+
+})
+
+
+
+
+
 
 export default router;
