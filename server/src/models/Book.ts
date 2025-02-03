@@ -12,7 +12,7 @@ interface IBook extends Document {
 let Books: Schema = new Schema({
     name: {type: String, required: true},
     author: {type: String, required: true},
-    pages: {type: String, required: true},
+    pages: {type: Number, required: true},
     
 })
 

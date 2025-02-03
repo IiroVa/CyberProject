@@ -27,6 +27,12 @@ if (process.env.NODE_ENV === 'development') {
     };
     app.use((0, cors_1.default)(corsOptions));
 }
+else if (process.env.NODE_ENV === 'production') {
+    app.use(express_1.default.static(path_1.default.resolve('../..', 'client', 'build')));
+    app.get('*', (req, res) => {
+        res.sendFile(path_1.default.resolve('../..', 'client', 'build', 'index.html'));
+    });
+}
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
