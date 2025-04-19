@@ -26,12 +26,17 @@ export default async function fetchWithAuth  (url: string, options: RequestInit 
     }else if(response.status === 403){
             let data = await response.json()
             if(data.message === "Token Expired"){
-                let response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/refreshtoken`)
+                let response = await fetch(`http://localhost:3000/api/user/refreshtoken`)
                 let newToken: string | null = null;
                 if(response.ok){
                     let data = await response.json()
                     newToken = data.token;
-                    
+                    console.log("748"+ newToken)
+                    let headers = {
+                        ...options.headers,
+                        Authorization: `Bearer ${newToken}`
+                    };
+
                     console.log("AIROT" + JSON.stringify(headers))
                     response = await fetch(url, { ...options, headers });
                     if (response.ok) {

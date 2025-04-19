@@ -14,7 +14,6 @@ import { validateToken } from './validateToken'
 
 
 
-
 const router: Router = Router();
 
 router.post("/register",
@@ -214,14 +213,14 @@ router.post("/login",
                         username: user.username.toLowerCase(),
                         
                     }
-                    const accessToken: string = jwt.sign(accessTokenjwtPayload, process.env.ACCESSTOKENSECRET as string, { expiresIn: '15m' })
+                    const accessToken: string = jwt.sign(accessTokenjwtPayload, process.env.ACCESSTOKENSECRET as string, { expiresIn: '5s' })
                     const refreshTokenjwtPayload: JwtPayload = {
                         
                         username: user.username.toLowerCase(),
                     }
                     const refreshToken: string = jwt.sign(refreshTokenjwtPayload, process.env.REFRESHTOKENSECRET as string, { expiresIn: '30d' })
 
-
+                    console.log("Tokens" + accessToken + "-XXX- " + refreshToken)
                     res.cookie('refreshToken', refreshToken, {
                         httpOnly: true,
                         maxAge: 60 * 60 * 24 * 30 * 1000
@@ -264,4 +263,53 @@ router.post("/secret",validateToken,
         }
     }
 )
+router.get("/refreshtoken", async (req: Request, res: Response) => {
+    try {
+       
+        let token = req.cookies.refreshToken;
+        console.log("500 megaa" + token)
+        if(!token){
+            res.status(401).json({message: "Missing token"})
+
+        }else{
+            let verified: JwtPayload = jwt.verify(token, process.env.REFRESHTOKENSECRET as string) as JwtPayload
+            console.log("500" + verified)
+            let user = await User.findOne({username: verified.username})
+            console.log("500" + verified)
+            if(user){
+               
+                const accessTokenjwtPayload: JwtPayload = {
+                    username: user.username.toLowerCase(),
+                }
+                const accessToken: string = jwt.sign(accessTokenjwtPayload, process.env.ACCESSTOKENSECRET as string, { expiresIn: '15m' })
+                console.log("500" + accessToken)
+                res.status(201).json({token: accessToken})
+            }else{
+                res.status(401).json({message: "Error while fetching user from database."})
+            }
+        }
+        
+        
+        
+
+
+        
+        
+        
+    } catch (error: any) {
+        if(error instanceof jwt.TokenExpiredError){
+        
+        res.status(403).json({message: "Token expired"})
+
+        }else if (error instanceof jwt.JsonWebTokenError) {
+            console.log('Invalid token!'); 
+            res.status(402).json({message: "Access denied invalid token."})
+          }else{
+            console.log(`Error ${error}`)
+            res.status(500).json({error: "Internal Server Error"})
+          }
+        
+    }
+
+})
 export default router;

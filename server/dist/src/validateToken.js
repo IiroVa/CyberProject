@@ -22,7 +22,7 @@ const validateToken = (req, res, next) => {
                 res.status(403).json({ message: "Token Expired" });
             }
             else if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
-                console.log('Invalid token!'); // Token ei ole kelvollinen
+                console.log('Invalid token!');
                 res.status(402).json({ message: "Access denied invalid token." });
             }
             else {

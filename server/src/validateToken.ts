@@ -24,7 +24,7 @@ export const validateToken = (req: CustomRequest, res: Response, next: NextFunct
                 res.status(403).json({message: "Token Expired"})
 
             }else if (error instanceof jwt.JsonWebTokenError) {
-                console.log('Invalid token!'); // Token ei ole kelvollinen
+                console.log('Invalid token!'); 
                 res.status(402).json({message: "Access denied invalid token."})
             }else{
                 console.log("Internal server error")

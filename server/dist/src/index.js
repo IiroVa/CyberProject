@@ -125,11 +125,12 @@ router.post("/login", (0, express_validator_1.body)("username").trim().escape(),
                 const accessTokenjwtPayload = {
                     username: user.username.toLowerCase(),
                 };
-                const accessToken = jsonwebtoken_1.default.sign(accessTokenjwtPayload, process.env.ACCESSTOKENSECRET, { expiresIn: '15m' });
+                const accessToken = jsonwebtoken_1.default.sign(accessTokenjwtPayload, process.env.ACCESSTOKENSECRET, { expiresIn: '5s' });
                 const refreshTokenjwtPayload = {
                     username: user.username.toLowerCase(),
                 };
                 const refreshToken = jsonwebtoken_1.default.sign(refreshTokenjwtPayload, process.env.REFRESHTOKENSECRET, { expiresIn: '30d' });
+                console.log("Tokens" + accessToken + "-XXX- " + refreshToken);
                 res.cookie('refreshToken', refreshToken, {
                     httpOnly: true,
                     maxAge: 60 * 60 * 24 * 30 * 1000
@@ -153,6 +154,45 @@ router.post("/secret", validateToken_1.validateToken, async (req, res) => {
     catch (error) {
         console.error(`Error during user login: ${error}`);
         res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+router.get("/refreshtoken", async (req, res) => {
+    try {
+        let token = req.cookies.refreshToken;
+        console.log("500 megaa" + token);
+        if (!token) {
+            res.status(401).json({ message: "Missing token" });
+        }
+        else {
+            let verified = jsonwebtoken_1.default.verify(token, process.env.REFRESHTOKENSECRET);
+            console.log("500" + verified);
+            let user = await User_1.User.findOne({ username: verified.username });
+            console.log("500" + verified);
+            if (user) {
+                const accessTokenjwtPayload = {
+                    username: user.username.toLowerCase(),
+                };
+                const accessToken = jsonwebtoken_1.default.sign(accessTokenjwtPayload, process.env.ACCESSTOKENSECRET, { expiresIn: '15m' });
+                console.log("500" + accessToken);
+                res.status(201).json({ token: accessToken });
+            }
+            else {
+                res.status(401).json({ message: "Error while fetching user from database." });
+            }
+        }
+    }
+    catch (error) {
+        if (error instanceof jsonwebtoken_1.default.TokenExpiredError) {
+            res.status(403).json({ message: "Token expired" });
+        }
+        else if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
+            console.log('Invalid token!');
+            res.status(402).json({ message: "Access denied invalid token." });
+        }
+        else {
+            console.log(`Error ${error}`);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
     }
 });
 exports.default = router;
