@@ -4,6 +4,7 @@ import morgan from "morgan"
 import path from "path"
 import mongoose, { Connection } from "mongoose";
 import cors, {CorsOptions} from 'cors'
+import dotenv from "dotenv"
 const app: Express = express();
 const port = 1234;
 
@@ -16,26 +17,15 @@ db.on("error", console.error.bind(console, "MongoDB connection error"))
 
 
 app.use(express.json());
+dotenv.config()
 app.use(morgan("dev"));
 
 
-app.use(express.static(path.join(__dirname, "../public")))
 
 
-app.use("/", router);
-if(process.env.NODE_ENV === 'development') {
-    const corsOptions: CorsOptions = {
-        origin: 'http://localhost:3000',
-        optionsSuccessStatus: 200
-    }
-    app.use(cors(corsOptions))
-} else if (process.env.NODE_ENV==='production') {
-    app.use(express.static(path.resolve('../..', 'client', 'build')))
-    app.get('*', (req: Request, res: Response)=>{
-        res.sendFile(path.resolve('../..', 'client', 'build', 'index.html'))
-    })
-    
-    }
+
+app.use("/api/user", router);
+
 app.listen(port, ()=>{
     console.log(`Server running on port ${port}`)
 });

@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { NewBook } from './components/NewBook'
-import { ShowBooks } from './components/ShowBooks'
+import Login from './components/Login/Login'
+import Register from './components/Register/Register'
+import Inside from './components/Inside/Inside'
+import AuthProvider from './components/Authprovider/AuthProvider'
 function App() {
 
 
@@ -8,26 +10,42 @@ function App() {
 
 
   return (
+    <>
+    <AuthProvider>
     <BrowserRouter>
     
     <Routes>
       <Route path="/" element={
          <>
-         <h1>books</h1>
-         <NewBook/></>
+         <Register/>
+         
+         </>
         
         
         
         
         }></Route>
-      <Route path="/books/:name" element={
-        //https://stackoverflow.com/questions/60998386/using-the-useparams-hook-in-react
-         <><ShowBooks/></>
+        <Route path="/login" element={
+         <>
+         
+         <Login/>
+         </>
         
         
         
         
         }></Route>
+        <Route path="/inside" element={
+         <>
+         
+         <Inside/>
+         </>
+        
+        
+        
+        
+        }></Route>
+      
 
       <Route path="*" element={
         
@@ -40,6 +58,9 @@ function App() {
     </Routes>
     
     </BrowserRouter>
+    </AuthProvider>
+    
+    </>
     
     
     
