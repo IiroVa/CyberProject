@@ -165,7 +165,7 @@ router.get("/refreshtoken", async (req, res) => {
         }
         else {
             let verified = jsonwebtoken_1.default.verify(token, process.env.REFRESHTOKENSECRET);
-            console.log("500" + verified);
+            console.log("500" + verified + "||999||" + verified.username + "||999||");
             let user = await User_1.User.findOne({ username: verified.username });
             console.log("500" + verified);
             if (user) {

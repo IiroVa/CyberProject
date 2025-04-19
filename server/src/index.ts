@@ -273,7 +273,7 @@ router.get("/refreshtoken", async (req: Request, res: Response) => {
 
         }else{
             let verified: JwtPayload = jwt.verify(token, process.env.REFRESHTOKENSECRET as string) as JwtPayload
-            console.log("500" + verified)
+            console.log("500" + verified + "||999||" + verified.username + "||999||")
             let user = await User.findOne({username: verified.username})
             console.log("500" + verified)
             if(user){
